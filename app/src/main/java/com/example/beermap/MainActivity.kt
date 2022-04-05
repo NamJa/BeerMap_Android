@@ -4,24 +4,28 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var bottomSheet: LinearLayout
+    private lateinit var bottomSheet: FrameLayout
     private lateinit var btnPersistent: Button
     private lateinit var bottomSheetStateText: TextView
+    val bottomSheetFragment = BottomSheetFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        bottomSheetFragment.show(supportFragmentManager, BottomSheetFragment.TAG)
 
         initView()
         setBtnExpandSheet()
 
         val sheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         btnPersistent.setOnClickListener {
             if (sheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
     }
     private fun initView() {
         bottomSheet = findViewById(R.id.bottomSheet)

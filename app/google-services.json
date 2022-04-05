@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1020821227910",
+    "firebase_url": "https://beermap-712bf-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "beermap-712bf",
+    "storage_bucket": "beermap-712bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1020821227910:android:124786a20b6284e34c0407",
+        "android_client_info": {
+          "package_name": "com.example.beermap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1020821227910-su0pi0mlkm20oqhl7i5kpblqihe0rpvt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFgyYJBYzHRQvYZpN5qGAzX2WyVds7sLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1020821227910-su0pi0mlkm20oqhl7i5kpblqihe0rpvt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
