@@ -2,27 +2,61 @@ package com.example.beermap
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.beermap.firebase.PubData
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
+import java.util.zip.Inflater
 
+private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var bottomSheet: FrameLayout
+    private lateinit var bottomSheet: LinearLayout
     private lateinit var btnPersistent: Button
     private lateinit var bottomSheetStateText: TextView
-    val bottomSheetFragment = BottomSheetFragment()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var database : FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
+
+    private lateinit var name: TextView
+    private lateinit var address: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        bottomSheetFragment.show(supportFragmentManager, BottomSheetFragment.TAG)
+        database = FirebaseDatabase.getInstance()
+        databaseReference = database.getReference("pubs")
+
 
         initView()
         setBtnExpandSheet()
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var num = 0
+                for (data in snapshot.children) {
+                    num += 1
+                    val result = data.getValue<PubData>()
+                    Log.d(TAG, "${result?.name}")
+                    if (num == 2) {
+                        name.text = result?.name
+                        address.text = result?.address
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "loadPost: onCancelled", error.toException())
+            }
+        })
 
         val sheetBehavior = BottomSheetBehavior.from(bottomSheet)
         sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -71,7 +105,11 @@ class MainActivity : AppCompatActivity() {
         bottomSheet = findViewById(R.id.bottomSheet)
         btnPersistent = findViewById(R.id.btnPersistent)
         bottomSheetStateText = findViewById(R.id.bottomSheetStateText)
+        recyclerView = findViewById(R.id.recyclerView)
         bottomSheetStateText.text = "COLLAPSED"
+
+        name = findViewById(R.id.name)
+        address = findViewById(R.id.address)
 
     }
 
