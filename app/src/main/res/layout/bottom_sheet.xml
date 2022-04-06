@@ -8,7 +8,7 @@
     android:orientation="vertical"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_peekHeight="100dp"
-    app:behavior_hideable="true"
+    app:behavior_hideable="false"
     android:padding="12dp">
 
     <androidx.recyclerview.widget.RecyclerView
