@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.beermap.firebase.PubData
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var database : FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
 
+
     private lateinit var name: TextView
     private lateinit var address: TextView
 
@@ -39,18 +41,18 @@ class MainActivity : AppCompatActivity() {
         initView()
         setBtnExpandSheet()
 
+        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var num = 0
+                val pubDataList: MutableList<PubData> = mutableListOf()
                 for (data in snapshot.children) {
-                    num += 1
                     val result = data.getValue<PubData>()
+                    pubDataList.add(result!!)
                     Log.d(TAG, "${result?.name}")
-                    if (num == 2) {
-                        name.text = result?.name
-                        address.text = result?.address
-                    }
                 }
+                recyclerView.adapter = PubdataRecyclerViewAdapter(this@MainActivity, pubDataList)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -108,8 +110,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         bottomSheetStateText.text = "COLLAPSED"
 
-        name = findViewById(R.id.name)
-        address = findViewById(R.id.address)
+
 
     }
 
