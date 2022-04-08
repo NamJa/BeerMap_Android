@@ -48,9 +48,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var map: GoogleMap
     private lateinit var geocoder: Geocoder
-    private val pubDataList: MutableList<PubData> = mutableListOf()
+    private var pubDataList: MutableList<PubData> = mutableListOf()
 
-    private lateinit var button: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +69,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                pubDataList = mutableListOf()
                 for (data in snapshot.children) {
                     val result = data.getValue<PubData>()
                     pubDataList.add(result!!)
