@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var geocoder: Geocoder
     private val pubDataList: MutableList<PubData> = mutableListOf()
-    private val pubMap: MutableMap<String, PubData> = mutableMapOf()
 
     private lateinit var button: Button
 
@@ -53,17 +52,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
         geocoder = Geocoder(this@MainActivity, Locale.KOREA)
         initView()
 
         recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-        button.setOnClickListener {
-            for (i in pubMap) {
-                Log.d(TAG, "${i.key} : ${(i.value)}")
-                val geo = geocoder.getFromLocationName(i.value.address, 1)
-                updateData(i.key, i.value.address, i.value.menu, i.value.name, geo[0].latitude, geo[0].longitude)
-            }
-        }
 
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -71,7 +64,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     val result = data.getValue<PubData>()
                     pubDataList.add(result!!)
                     Log.d(TAG, "${data.key}")
-                    pubMap.put(data.key!!, result)
                 }
                 CoroutineScope(Dispatchers.Main).launch {
                     pubDataList.forEach { pubData ->
@@ -91,8 +83,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val sheetBehavior = BottomSheetBehavior.from(bottomSheet)
         sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
-
         sheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 //
@@ -159,6 +149,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 item.setOnClickListener {
                     //test
                     Toast.makeText(this@MainActivity, "${pubData.menu}", Toast.LENGTH_SHORT).show()
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(pubData.Lat, pubData.Lng), 16f))
                 }
             }
         }
