@@ -118,23 +118,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         val seoul = LatLng(37.1, 128.0)
         // 카메라 이동
-        map.moveCamera(CameraUpdateFactory.newLatLng(seoul))
-
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
     }
+
+
     private fun updateData(pubNo: String, address: String, menu: String, name: String, Lat: Double, Lng: Double){
         val pub: Map<String, Any> = mapOf("address" to address, "menu" to menu, "name" to name, "Lat" to Lat, "Lng" to Lng)
         databaseReference.child(pubNo).updateChildren(pub)
     }
+
 
     private fun initView() {
         bottomSheet = findViewById(R.id.bottomSheet)
         recyclerView = findViewById(R.id.recyclerView)
         button = findViewById(R.id.button)
     }
+
+
 
     inner class PubDataRecyclerViewAdapter(val pubDataList: List<PubData>) :
         RecyclerView.Adapter<PubDataRecyclerViewAdapter.ViewHolder>() {
