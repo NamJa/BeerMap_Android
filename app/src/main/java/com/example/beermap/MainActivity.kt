@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var geocoder: Geocoder
     private val pubDataList: MutableList<PubData> = mutableListOf()
-    private val markerDataList: MutableList<LatLng> = mutableListOf()
     private val pubMap: MutableMap<String, PubData> = mutableMapOf()
 
     private lateinit var button: Button
@@ -69,11 +68,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     Log.d(TAG, "${data.key}")
                     pubMap.put(data.key!!, result)
                 }
-                pubDataList.forEach { pubData ->
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val geo = geocoder.getFromLocationName(pubData.address, 1)
-                        val pubLatLng = LatLng(geo[0].latitude, geo[0].longitude)
-                        markerDataList.add(pubLatLng)
+                CoroutineScope(Dispatchers.Main).launch {
+                    pubDataList.forEach { pubData ->
+                        val pubLoc = LatLng(pubData.Lat, pubData.Lng)
+                        map.addMarker(MarkerOptions()
+                            .position(pubLoc)
+                            .title(pubData.name))
                     }
                 }
                 recyclerView.adapter = PubdataRecyclerViewAdapter(this@MainActivity, pubDataList)
@@ -123,18 +123,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun updateData(pubNo: String, address: String, menu: String, name: String, Lat: Double, Lng: Double){
         val pub: Map<String, Any> = mapOf("address" to address, "menu" to menu, "name" to name, "Lat" to Lat, "Lng" to Lng)
         databaseReference.child(pubNo).updateChildren(pub)
-    }
-
-    private fun addMarkers(googleMap: GoogleMap) {
-        map = googleMap
-        pubDataList.forEach { pubData ->
-            val geo = geocoder.getFromLocationName(pubData.address, 1)
-            val pubLatLng = LatLng(geo[0].latitude, geo[0].longitude)
-            map.addMarker(MarkerOptions()
-                .position(pubLatLng)
-                .title(pubData.name)
-            )
-        }
     }
 
     private fun initView() {
