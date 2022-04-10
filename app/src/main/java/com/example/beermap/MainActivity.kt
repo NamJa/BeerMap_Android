@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
@@ -40,10 +42,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val sheetBehavior by lazy {
         BottomSheetBehavior.from(bottomSheet)
     }
-
+    private val fadeIn by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.fade_in)
+    }
+    private val fadeOut by lazy {
+        AnimationUtils.loadAnimation(this, R.anim.fade_out)
+    }
     private lateinit var innerContainer: ConstraintLayout
     private lateinit var bottomSheet: ConstraintLayout
     private lateinit var recyclerView: RecyclerView
+    private lateinit var floatingButton: FloatingActionButton
     private lateinit var database : FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private lateinit var map: GoogleMap
@@ -67,6 +75,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
 
+        // firebase data 수신
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 pubDataList = mutableListOf()
@@ -93,6 +102,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
+        // bottom sheet 동작 지정
         sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         sheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
@@ -104,10 +114,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        floatingButton.visibility = View.VISIBLE
+                        floatingButton.startAnimation(fadeIn)
                     }
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
+                        floatingButton.startAnimation(fadeOut)
+                        floatingButton.visibility = View.GONE
                     }
                     BottomSheetBehavior.STATE_DRAGGING -> {
                     }
@@ -117,6 +131,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
+        floatingButton.setOnClickListener {
+            Toast.makeText(this@MainActivity, "Hou! floatButton!", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -139,7 +156,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         bottomSheet = findViewById(R.id.bottomSheet)
         recyclerView = findViewById(R.id.recyclerView)
         innerContainer = findViewById(R.id.innerContainer)
-
+        floatingButton = findViewById(R.id.floatingButton)
         // statusbar 투명화
         window.apply {
             setFlags(
