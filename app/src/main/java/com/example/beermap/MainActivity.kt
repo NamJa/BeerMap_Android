@@ -134,6 +134,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // floating 버튼 동작
         floatingButton.setOnClickListener {
             Toast.makeText(this@MainActivity, "Hou! floatButton!", Toast.LENGTH_SHORT).show()
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.innerContainer, AddPubDataFragment.newInstance())
+                .addToBackStack(null)
+                .commit()
         }
     }
 
