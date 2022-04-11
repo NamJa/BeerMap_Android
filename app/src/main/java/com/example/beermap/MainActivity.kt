@@ -131,6 +131,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
+        // floating 버튼 동작
         floatingButton.setOnClickListener {
             Toast.makeText(this@MainActivity, "Hou! floatButton!", Toast.LENGTH_SHORT).show()
         }
@@ -204,7 +205,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 item.setOnClickListener {
                     //test
                     Toast.makeText(this@MainActivity, "${pubData.menu}", Toast.LENGTH_SHORT).show()
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(pubData.Lat, pubData.Lng), 16f))
+                    val newLatingZoom = CameraUpdateFactory.newLatLngZoom(LatLng(pubData.Lat, pubData.Lng), 16f)
+                    map.animateCamera(newLatingZoom)
                     sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
             }
