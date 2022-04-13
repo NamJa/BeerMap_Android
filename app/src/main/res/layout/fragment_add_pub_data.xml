@@ -36,7 +36,7 @@
             app:layout_constraintTop_toBottomOf="@id/addPubToolbar">
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/pubTitleTextview"
+                android:id="@+id/pubTitleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="상호명"
@@ -65,7 +65,7 @@
                 app:layout_constraintTop_toBottomOf="@id/addPubToolbar">
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/pubAddressTextview"
+                    android:id="@+id/pubAddressEditText"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:hint="주소"
@@ -92,7 +92,7 @@
             app:layout_constraintTop_toBottomOf="@id/addressArea">
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/pubMenuTextview"
+                android:id="@+id/pubMenuEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
@@ -104,7 +104,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/addPubButton"
+            android:id="@+id/registerPubButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="50dp"

@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,6 +15,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 class AddPubDataFragment : Fragment() {
     private lateinit var pubDataFragmentContainer: ConstraintLayout
     private lateinit var toolbar: Toolbar
+    private lateinit var pubTitle: EditText
+    private lateinit var pubAddress: EditText
+    private lateinit var pubMenu: EditText
+    private lateinit var searchAddressBtn: Button
+    private lateinit var registerBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +51,13 @@ class AddPubDataFragment : Fragment() {
             0,
             0
         )
-        // 툴바 초기 설정
-        toolbar = view.findViewById(R.id.addPubToolbar)
 
+        toolbar = view.findViewById(R.id.addPubToolbar)
+        pubTitle = view.findViewById(R.id.pubTitleEditText)
+        pubAddress = view.findViewById(R.id.pubAddressEditText)
+        pubMenu = view.findViewById(R.id.pubMenuEditText)
+        searchAddressBtn = view.findViewById(R.id.addressSearchButton)
+        registerBtn = view.findViewById(R.id.registerPubButton)
     }
 
 
