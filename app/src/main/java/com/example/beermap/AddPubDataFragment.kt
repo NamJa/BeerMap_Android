@@ -42,7 +42,7 @@ class AddPubDataFragment : Fragment() {
             0,
             statusBarHeight(),
             0,
-            navigationHeight()
+            0
         )
         // 툴바 초기 설정
         toolbar = view.findViewById(R.id.addPubToolbar)
