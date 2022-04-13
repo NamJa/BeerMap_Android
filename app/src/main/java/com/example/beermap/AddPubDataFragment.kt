@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,10 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.firebase.database.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 private const val TAG = "AddPubDataFragment"
@@ -31,14 +36,35 @@ class AddPubDataFragment : Fragment() {
     private lateinit var searchAddressBtn: Button
     private lateinit var registerBtn: Button
 
+    private lateinit var database : FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
+
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
+    private var totalPubdataNum: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // places api는 이렇게 초기화를 해줘야 한다.
         if (!Places.isInitialized()) {
             Places.initialize(requireActivity(), resources.getString(R.string.google_map_api_key), Locale.KOREA)
         }
+        // firebase initialize
+        database = FirebaseDatabase.getInstance()
+        databaseReference = database.getReference("pubs")
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    totalPubdataNum = snapshot.children.count()
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "loadData: onCancelled", error.toException())
+            }
+        })
     }
 
     override fun onCreateView(
@@ -55,10 +81,12 @@ class AddPubDataFragment : Fragment() {
         }
         toolbar.title = "ADD PUB PAGE"
 
+        // AutoCompleteActivity에서 Places API를 정상적으로 입력받았을 경우
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val place: Place = Autocomplete.getPlaceFromIntent(result.data!!)
+
                 pubAddress.setText(place.address)
                 latitude = place.latLng!!.latitude
                 longitude = place.latLng!!.longitude
@@ -77,10 +105,27 @@ class AddPubDataFragment : Fragment() {
                     .build(requireActivity())
 
             startForResult.launch(intent)
+        }
 
+        registerBtn.setOnClickListener {
+            Log.d(TAG, "firebase data nums: $totalPubdataNum")
+            if (pubTitle.text.isEmpty() || pubAddress.text.isEmpty() || pubMenu.text.isEmpty()) {
+                Toast.makeText(context, "각 입력 필드에 올바른 값을 채워주세요", Toast.LENGTH_SHORT).show()
+            } else {
+                updateData(pubAddress.text.toString(), pubMenu.text.toString(), pubTitle.text.toString(), latitude, longitude)
+                pubTitle.setText("")
+                pubAddress.setText("")
+                pubMenu.setText("")
+            }
         }
 
         return view
+    }
+
+    private fun updateData(address: String, menu: String, name: String, Lat: Double, Lng: Double){
+        val pub: Map<String, Any> = mapOf("address" to address, "menu" to menu, "name" to name, "Lat" to Lat, "Lng" to Lng)
+        val pubNo = "pubNo$totalPubdataNum"
+        databaseReference.child(pubNo).updateChildren(pub)
     }
 
     private fun initView(view: View) {
@@ -90,7 +135,7 @@ class AddPubDataFragment : Fragment() {
             0,
             statusBarHeight(),
             0,
-            0
+            navigationHeight()
         )
 
         toolbar = view.findViewById(R.id.addPubToolbar)

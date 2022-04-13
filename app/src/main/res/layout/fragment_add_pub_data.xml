@@ -5,16 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:id="@+id/pubDataFragmentContainer"
     tools:context=".AddPubDataFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/pubDataFragmentContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/addPubToolbar"
@@ -117,6 +110,5 @@
             app:layout_constraintTop_toBottomOf="@id/TIL_pub_menu"
             app:layout_constraintVertical_bias="0.15" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
