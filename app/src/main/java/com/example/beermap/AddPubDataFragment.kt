@@ -1,16 +1,26 @@
 package com.example.beermap
 
+import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import java.util.*
 
+private const val TAG = "AddPubDataFragment"
 
 class AddPubDataFragment : Fragment() {
     private lateinit var pubDataFragmentContainer: ConstraintLayout
@@ -21,8 +31,14 @@ class AddPubDataFragment : Fragment() {
     private lateinit var searchAddressBtn: Button
     private lateinit var registerBtn: Button
 
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!Places.isInitialized()) {
+            Places.initialize(requireActivity(), resources.getString(R.string.google_map_api_key), Locale.KOREA)
+        }
     }
 
     override fun onCreateView(
@@ -38,6 +54,31 @@ class AddPubDataFragment : Fragment() {
             (activity as AppCompatActivity).onBackPressed()
         }
         toolbar.title = "ADD PUB PAGE"
+
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val place: Place = Autocomplete.getPlaceFromIntent(result.data!!)
+                pubAddress.setText(place.address)
+                latitude = place.latLng!!.latitude
+                longitude = place.latLng!!.longitude
+                Log.d(TAG, "lat: $latitude")
+                Log.d(TAG, "lat: $longitude")
+            }
+        }
+
+        searchAddressBtn.setOnClickListener {
+            val fields = listOf(
+                Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG,
+                Place.Field.ADDRESS
+            )
+            val intent =
+                Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                    .build(requireActivity())
+
+            startForResult.launch(intent)
+
+        }
 
         return view
     }

@@ -68,6 +68,7 @@
                     android:id="@+id/pubAddressEditText"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:maxLines="2"
                     android:hint="주소"
                     android:minHeight="48dp" />
             </com.google.android.material.textfield.TextInputLayout>

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BeerMap</string>
+    <string name="google_map_api_key">AIzaSyAmT67dreaJSSMn5Op5NKemxpPq6WSCni8</string>
 </resources>
