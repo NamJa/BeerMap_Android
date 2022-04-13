@@ -1,16 +1,18 @@
 package com.example.beermap
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 
 
 class AddPubDataFragment : Fragment() {
     private lateinit var pubDataFragmentContainer: ConstraintLayout
+    private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +24,14 @@ class AddPubDataFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_pub_data, container, false)
         initView(view)
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        toolbar.setNavigationOnClickListener {
+            (activity as AppCompatActivity).onBackPressed()
+        }
+        toolbar.title = "ADD PUB PAGE"
+
         return view
     }
 
@@ -34,6 +44,9 @@ class AddPubDataFragment : Fragment() {
             0,
             navigationHeight()
         )
+        // 툴바 초기 설정
+        toolbar = view.findViewById(R.id.addPubToolbar)
+
     }
 
 

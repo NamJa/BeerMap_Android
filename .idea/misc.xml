@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/drawable/arrow_back.xml" value="0.1585" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/activity_main.xml" value="0.176" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/add_pub_data_fragment.xml" value="0.2390625" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/bottom_sheet.xml" value="0.25364583333333335" />
@@ -10,6 +11,7 @@
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/fragment_bottom_sheet.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/item_pubdata_recyclerview.xml" value="0.446875" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/marker_info_contents.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/menu/add_pub_menu.xml" value="0.25364583333333335" />
       </map>
     </option>
   </component>
