@@ -2,12 +2,10 @@ package com.example.beermap
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -50,6 +48,7 @@ class AddPubDataFragment : Fragment() {
     private lateinit var databaseReference: DatabaseReference
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var geocoder: Geocoder
 
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
@@ -62,6 +61,8 @@ class AddPubDataFragment : Fragment() {
         if (!Places.isInitialized()) {
             Places.initialize(requireActivity(), resources.getString(R.string.google_map_api_key), Locale.KOREA)
         }
+        // GeoCoder initialize
+        geocoder = Geocoder(context, Locale.KOREA)
         // firebase initialize
         database = FirebaseDatabase.getInstance()
         databaseReference = database.getReference("pubs")
@@ -127,7 +128,6 @@ class AddPubDataFragment : Fragment() {
             } else {
                 Toast.makeText(context, "위치를 가져오는 중입니다.", Toast.LENGTH_SHORT).show()
                 requestNewLocationData()
-                useCurLocationBtn.isEnabled = false
             }
         }
 
@@ -146,11 +146,13 @@ class AddPubDataFragment : Fragment() {
         return view
     }
 
+
     private fun updateData(address: String, menu: String, name: String, Lat: Double, Lng: Double){
         val pub: Map<String, Any> = mapOf("address" to address, "menu" to menu, "name" to name, "Lat" to Lat, "Lng" to Lng)
         val pubNo = "pubNo$totalPubdataNum"
         databaseReference.child(pubNo).updateChildren(pub)
     }
+
 
     private fun initView(view: View) {
         // 부모 Activity에서 상태바와 네비게이션바의 영역 설정을 했기 때문에, 자식 fragment에서도 똑같이 설정
@@ -170,7 +172,8 @@ class AddPubDataFragment : Fragment() {
         registerBtn = view.findViewById(R.id.registerPubButton)
     }
 
-    fun onCheckPermission() {
+
+    private fun onCheckPermission() {
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -182,40 +185,19 @@ class AddPubDataFragment : Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == LOCATION_PERMISSIONS_REQUEST) {
-            if(grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "앱 실행을 위한 권한이 설정되었습니다.", Toast.LENGTH_SHORT).show()
-            } else{
-                Toast.makeText(context, "권한이 취소되었습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
     @SuppressLint("MissingPermission")
     private fun requestNewLocationData() {
-        val locationRequest = com.google.android.gms.location.LocationRequest.create()
-        locationRequest.priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 0
-        locationRequest.fastestInterval = 0
-        locationRequest.numUpdates = 1
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper()!!)
-    }
-
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            val lastLocation: Location = locationResult.lastLocation
-            latitude = lastLocation.latitude
-            longitude = lastLocation.longitude
-            Log.d(TAG, "latitude: $latitude")
-            Log.d(TAG, "longitude: $longitude")
-            useCurLocationBtn.isEnabled = true
+        fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
+            location?.let {
+                latitude = location.latitude
+                longitude = location.longitude
+                Log.d(TAG, "latitude: $latitude, longitude: $longitude")
+                val geoCodeAddress = geocoder.getFromLocation(latitude, longitude, 1)
+                val address = geoCodeAddress[0].getAddressLine(0)
+                pubAddress.setText(address)
+            }
         }
     }
 
@@ -224,7 +206,6 @@ class AddPubDataFragment : Fragment() {
         val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         return if(resourceId > 0) resources.getDimensionPixelSize(resourceId) else 0
     }
-
     fun navigationHeight(): Int {
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return if(resourceId > 0) resources.getDimensionPixelSize(resourceId) else 0
