@@ -3,6 +3,8 @@ package com.example.beermap
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -75,15 +78,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // LIGHT MODE 설정
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         database = FirebaseDatabase.getInstance()
         databaseReference = database.getReference("pubs")
 
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity)
         initView()
@@ -157,7 +158,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 .addToBackStack(null)
                 .commit()
         }
-
+        Log.d("AppRecycle", "oncreate()")
         //GPS 버튼 동작
         mapGPSButton.setOnClickListener{
             if(ActivityCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -180,13 +181,50 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     override fun onMapReady(googleMap: GoogleMap) {
+        Log.d("AppRecycle", "OnMapReady()")
         map = googleMap
         val seoul = LatLng(37.1, 128.0)
         // 카메라 이동
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
         map.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
+        // 현재 다크모드인지 라이트모드인지 감지하여 맵 테마 설정
+        val nightModeFlags = this@MainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        when(nightModeFlags) {
+            Configuration.UI_MODE_NIGHT_NO -> {
+                setMapStyle(R.raw.standard_map_stytle_json)
+            }
+            Configuration.UI_MODE_NIGHT_YES -> {
+                setMapStyle(R.raw.night_map_style_json)
+            }
+        }
     }
 
+    // 현재 view에서 lightMode <-> darkMode를 감지하여 변경한다.
+    // activity가 재실행되지 않는다.
+    // Manifest에서 configChanges:uiMode 설정
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d("AppRecycle", "onConfigurationChanged()")
+        val nightModeFlags = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        when(nightModeFlags) {
+            Configuration.UI_MODE_NIGHT_NO -> {
+                setMapStyle(R.raw.standard_map_stytle_json)
+            }
+            Configuration.UI_MODE_NIGHT_YES -> {
+                setMapStyle(R.raw.night_map_style_json)
+            }
+        }
+    }
+    private fun setMapStyle(mapStyleJsonID: Int) {
+        try {
+            val isStyleParseSuccess = map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, mapStyleJsonID))
+            if (!isStyleParseSuccess) {
+                Log.e(TAG, "Style parsing failed")
+            }
+        } catch (e: Resources.NotFoundException) {
+            Log.e(TAG, "Can't find style. Error: ", e)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -217,7 +255,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         // 다른 Map app과 같이 현재 위치를 표시한다.
         map.isMyLocationEnabled = true
-        map.uiSettings.isMyLocationButtonEnabled = true
+        map.uiSettings.isMyLocationButtonEnabled = false
         // 기능 설정 및 ui 설정도 해야 화면에 파란 마커가 표시된다.
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity)
