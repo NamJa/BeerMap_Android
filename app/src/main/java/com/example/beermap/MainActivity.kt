@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var bottomSheet: ConstraintLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var floatingButton: ExtendedFloatingActionButton
+    private lateinit var mapGPSButton: ExtendedFloatingActionButton
     private lateinit var database : FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private lateinit var map: GoogleMap
@@ -118,13 +119,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         floatingButton.visibility = View.VISIBLE
+                        mapGPSButton.visibility = View.GONE
                         floatingButton.startAnimation(fadeIn)
+                        mapGPSButton.startAnimation(fadeOut)
                     }
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         floatingButton.startAnimation(fadeOut)
                         floatingButton.visibility = View.GONE
+                        mapGPSButton.startAnimation(fadeIn)
+                        mapGPSButton.visibility = View.VISIBLE
                     }
                     BottomSheetBehavior.STATE_DRAGGING -> {
                     }
@@ -165,6 +170,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         recyclerView = findViewById(R.id.recyclerView)
         innerContainer = findViewById(R.id.innerContainer)
         floatingButton = findViewById(R.id.floatingButton)
+        mapGPSButton = findViewById(R.id.MapGPSButton)
         // statusbar 투명화
         window.apply {
             setFlags(

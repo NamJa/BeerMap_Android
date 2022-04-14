@@ -39,9 +39,18 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="20dp"
                 android:text="ADD PUB"
-                app:maxImageSize="24dp"
                 app:icon="@drawable/baseline_add"
                 android:visibility="gone" />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/MapGPSButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="120dp"
+                app:icon="@drawable/baseline_gps" />
+
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
