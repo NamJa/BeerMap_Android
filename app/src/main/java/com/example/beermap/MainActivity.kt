@@ -27,6 +27,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var innerContainer: ConstraintLayout
     private lateinit var bottomSheet: ConstraintLayout
     private lateinit var recyclerView: RecyclerView
-    private lateinit var floatingButton: FloatingActionButton
+    private lateinit var floatingButton: ExtendedFloatingActionButton
     private lateinit var database : FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private lateinit var map: GoogleMap

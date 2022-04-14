@@ -68,11 +68,25 @@
 
             <Button
                 android:id="@+id/addressSearchButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_marginStart="5dp"
                 android:background="@drawable/baseline_search" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/use_cur_location_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="5dp"
+            android:text="현재 위치 사용"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            style="@style/Widget.Material3.Button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addressArea"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/TIL_pub_menu"
@@ -80,10 +94,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="50dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addressArea">
+            app:layout_constraintTop_toBottomOf="@id/use_cur_location_btn">
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/pubMenuEditText"
@@ -91,7 +105,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="top"
                 android:hint="메뉴 및 분위기"
-                android:lines="12"
+                android:lines="11"
+                android:maxLines="12"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/addressArea" />
@@ -101,9 +116,11 @@
             android:id="@+id/registerPubButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="50dp"
+            android:layout_marginHorizontal="80dp"
             android:text="등록"
+            android:textSize="14sp"
             android:textStyle="bold"
+            style="@style/Widget.Material3.Button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
