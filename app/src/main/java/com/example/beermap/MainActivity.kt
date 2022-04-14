@@ -18,7 +18,6 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -202,19 +201,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     // 현재 view에서 lightMode <-> darkMode를 감지하여 변경한다.
     // activity가 재실행되지 않는다.
     // Manifest에서 configChanges:uiMode 설정
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        Log.d("AppRecycle", "onConfigurationChanged()")
-        val nightModeFlags = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        when(nightModeFlags) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                setMapStyle(R.raw.standard_map_stytle_json)
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                setMapStyle(R.raw.night_map_style_json)
-            }
-        }
-    }
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        Log.d("AppRecycle", "onConfigurationChanged()")
+//        val nightModeFlags = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
+//        when(nightModeFlags) {
+//            Configuration.UI_MODE_NIGHT_NO -> {
+//                setMapStyle(R.raw.standard_map_stytle_json)
+//                bottomSheet.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+//            }
+//            Configuration.UI_MODE_NIGHT_YES -> {
+//                setMapStyle(R.raw.night_map_style_json)
+//                bottomSheet.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
+//            }
+//        }
+//    }
     private fun setMapStyle(mapStyleJsonID: Int) {
         try {
             val isStyleParseSuccess = map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, mapStyleJsonID))
