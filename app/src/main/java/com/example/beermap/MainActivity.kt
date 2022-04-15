@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var viewModel: MainViewModel
 
-    private val sheetBehavior by lazy {
+    val sheetBehavior by lazy {
         BottomSheetBehavior.from(binding.include.bottomSheet)
     }
     private val fadeIn by lazy {
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val fadeOut by lazy {
         AnimationUtils.loadAnimation(this, R.anim.fade_out)
     }
-    private lateinit var map: GoogleMap
+    lateinit var map: GoogleMap
     private lateinit var database : FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -195,6 +195,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         if(viewModel.isMarkedUsrGPS) {
             requestCurrentLocation()
             binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.gray_400))
+            isNotEnabledGPS = false
         }
         // 현재 다크모드인지 라이트모드인지 감지하여 맵 테마 설정
         val nightModeFlags = this@MainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -309,22 +310,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         RecyclerView.Adapter<PubDataRecyclerViewAdapter.ViewHolder>() {
         inner class ViewHolder(private val binding: ItemPubdataRecyclerviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
+            init {
+                binding.viewModel = PubDataViewModel()
+            }
+
             fun bind(pubData: PubData) {
-                binding.pubName.text = pubData.name
-                binding.pubAddress.text = pubData.address
+                binding.viewModel?.pub = pubData
                 binding.itemView.setOnClickListener {
-                    //test
+                    //test Toast Message
                     Toast.makeText(this@MainActivity, "${pubData.menu}", Toast.LENGTH_SHORT).show()
                     val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(LatLng(pubData.Lat, pubData.Lng), 16f)
                     map.animateCamera(newLatLngZoom)
                     sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
+                binding.executePendingBindings()
             }
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val binding = DataBindingUtil.inflate<ItemPubdataRecyclerviewBinding>(layoutInflater, R.layout.item_pubdata_recyclerview, parent, false)
-                return ViewHolder(binding)
+            binding.lifecycleOwner = this@MainActivity
+            return ViewHolder(binding)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
