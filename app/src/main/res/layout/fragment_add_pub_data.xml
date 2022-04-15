@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorOnPrimary"
-    android:id="@+id/pubDataFragmentContainer"
-    tools:context=".AddPubDataFragment">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorOnPrimary"
+        android:id="@+id/pubDataFragmentContainer"
+        tools:context=".AddPubDataFragment">
 
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/addPubToolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_constraintEnd_toEndOf="parent"
@@ -26,10 +32,10 @@
             android:layout_marginTop="60dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addPubToolbar">
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/pubTitleEditText"
+                android:id="@+id/pubTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="상호명"
@@ -55,10 +61,10 @@
                 android:layout_marginStart="50dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/addPubToolbar">
+                app:layout_constraintTop_toBottomOf="@id/toolbar">
 
                 <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/pubAddressEditText"
+                    android:id="@+id/pubAddress"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
@@ -86,7 +92,7 @@
             style="@style/Widget.Material3.Button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addressArea"/>
+            app:layout_constraintTop_toBottomOf="@id/addressArea" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/TIL_pub_menu"
@@ -100,7 +106,7 @@
             app:layout_constraintTop_toBottomOf="@id/useCurLocationButton">
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/pubMenuEditText"
+                android:id="@+id/pubMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="top"
@@ -128,4 +134,5 @@
             app:layout_constraintVertical_bias="0.15" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

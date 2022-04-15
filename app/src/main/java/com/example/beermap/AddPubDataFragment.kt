@@ -20,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.databinding.DataBindingUtil
+import com.example.beermap.databinding.FragmentAddPubDataBinding
 import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -35,14 +37,8 @@ private const val TAG = "AddPubDataFragment"
 private const val LOCATION_PERMISSIONS_REQUEST = 1000
 
 class AddPubDataFragment : Fragment() {
-    private lateinit var pubDataFragmentContainer: ConstraintLayout
-    private lateinit var toolbar: Toolbar
-    private lateinit var pubTitle: EditText
-    private lateinit var pubAddress: EditText
-    private lateinit var pubMenu: EditText
-    private lateinit var searchAddressBtn: Button
-    private lateinit var useCurLocationBtn: Button
-    private lateinit var registerBtn: Button
+
+    private lateinit var binding: FragmentAddPubDataBinding
 
     private lateinit var database : FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
@@ -86,14 +82,15 @@ class AddPubDataFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_pub_data, container, false)
-        initView(view)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_pub_data, container, false)
+        initView(binding.root)
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             (activity as AppCompatActivity).onBackPressed()
         }
-        toolbar.title = "ADD PUB PAGE"
+        binding.toolbar.title = "ADD PUB PAGE"
 
         // AutoCompleteActivity에서 Places API를 정상적으로 입력받았을 경우
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -101,7 +98,7 @@ class AddPubDataFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val place: Place = Autocomplete.getPlaceFromIntent(result.data!!)
 
-                pubAddress.setText(place.address)
+                binding.pubAddress.setText(place.address)
                 latitude = place.latLng!!.latitude
                 longitude = place.latLng!!.longitude
                 Log.d(TAG, "lat: $latitude")
@@ -109,7 +106,7 @@ class AddPubDataFragment : Fragment() {
             }
         }
 
-        searchAddressBtn.setOnClickListener {
+        binding.addressSearchButton.setOnClickListener {
             val fields = listOf(
                 Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG,
                 Place.Field.ADDRESS
@@ -121,7 +118,7 @@ class AddPubDataFragment : Fragment() {
             startForResult.launch(intent)
         }
 
-        useCurLocationBtn.setOnClickListener {
+        binding.useCurLocationButton.setOnClickListener {
             if(ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     || ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 onCheckPermission()
@@ -131,19 +128,19 @@ class AddPubDataFragment : Fragment() {
             }
         }
 
-        registerBtn.setOnClickListener {
+        binding.registerPubButton.setOnClickListener {
             Log.d(TAG, "firebase data nums: $totalPubdataNum")
-            if (pubTitle.text.isEmpty() || pubAddress.text.isEmpty() || pubMenu.text.isEmpty()) {
+            if (binding.pubTitle.text!!.isEmpty() || binding.pubAddress.text!!.isEmpty() || binding.pubMenu.text!!.isEmpty()) {
                 Toast.makeText(context, "각 입력 필드에 올바른 값을 채워주세요", Toast.LENGTH_SHORT).show()
             } else {
-                updateData(pubAddress.text.toString(), pubMenu.text.toString(), pubTitle.text.toString(), latitude, longitude)
-                pubTitle.setText("")
-                pubAddress.setText("")
-                pubMenu.setText("")
+                updateData(binding.pubAddress.text.toString(), binding.pubMenu.text.toString(), binding.pubTitle.text.toString(), latitude, longitude)
+                binding.pubTitle.setText("")
+                binding.pubAddress.setText("")
+                binding.pubMenu.setText("")
             }
         }
 
-        return view
+        return binding.root
     }
 
 
@@ -156,20 +153,12 @@ class AddPubDataFragment : Fragment() {
 
     private fun initView(view: View) {
         // 부모 Activity에서 상태바와 네비게이션바의 영역 설정을 했기 때문에, 자식 fragment에서도 똑같이 설정
-        pubDataFragmentContainer = view.findViewById(R.id.pubDataFragmentContainer)
-        pubDataFragmentContainer.setPadding(
+        binding.pubDataFragmentContainer.setPadding(
             0,
             statusBarHeight(),
             0,
             navigationHeight()
         )
-        toolbar = view.findViewById(R.id.addPubToolbar)
-        pubTitle = view.findViewById(R.id.pubTitleEditText)
-        pubAddress = view.findViewById(R.id.pubAddressEditText)
-        pubMenu = view.findViewById(R.id.pubMenuEditText)
-        searchAddressBtn = view.findViewById(R.id.addressSearchButton)
-        useCurLocationBtn = view.findViewById(R.id.useCurLocationButton)
-        registerBtn = view.findViewById(R.id.registerPubButton)
     }
 
 
@@ -196,7 +185,7 @@ class AddPubDataFragment : Fragment() {
                 Log.d(TAG, "latitude: $latitude, longitude: $longitude")
                 val geoCodeAddress = geocoder.getFromLocation(latitude, longitude, 1)
                 val address = geoCodeAddress[0].getAddressLine(0)
-                pubAddress.setText(address)
+                binding.pubAddress.setText(address)
             }
         }
     }

@@ -11,19 +11,20 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
-import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.beermap.databinding.ActivityMainBinding
+import com.example.beermap.databinding.ItemPubdataRecyclerviewBinding
 import com.example.beermap.firebase.PubData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -37,7 +38,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
@@ -46,11 +46,12 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity"
 private const val LOCATION_PERMISSIONS_REQUEST = 1000
-
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    private lateinit var viewModel: MainViewModel
+
     private val sheetBehavior by lazy {
-        BottomSheetBehavior.from(bottomSheet)
+        BottomSheetBehavior.from(binding.include.bottomSheet)
     }
     private val fadeIn by lazy {
         AnimationUtils.loadAnimation(this, R.anim.fade_in)
@@ -58,14 +59,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val fadeOut by lazy {
         AnimationUtils.loadAnimation(this, R.anim.fade_out)
     }
-    private lateinit var innerContainer: ConstraintLayout
-    private lateinit var bottomSheet: ConstraintLayout
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var floatingButton: ExtendedFloatingActionButton
-    private lateinit var mapGPSButton: ExtendedFloatingActionButton
+    private lateinit var map: GoogleMap
     private lateinit var database : FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
-    private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var pubDataList: MutableList<PubData> = mutableListOf()
     private var userCurLat: Double = 0.0
@@ -73,9 +69,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isNotEnabledGPS: Boolean = true
     private var isMapZoomed: Boolean = false
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+        binding.mainViewModel = viewModel
+
 
         database = FirebaseDatabase.getInstance()
         databaseReference = database.getReference("pubs")
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity)
         initView()
 
-        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+        binding.include.recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
 
         // firebase data 수신
         databaseReference.addValueEventListener(object : ValueEventListener {
@@ -108,7 +109,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         marker!!.tag = pubData
                     }
                 }
-                recyclerView.adapter = PubDataRecyclerViewAdapter(pubDataList)
+                binding.include.recyclerView.adapter = PubDataRecyclerViewAdapter(pubDataList)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -128,18 +129,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
-                        floatingButton.visibility = View.VISIBLE
-                        mapGPSButton.visibility = View.GONE
-                        floatingButton.startAnimation(fadeIn)
-                        mapGPSButton.startAnimation(fadeOut)
+                        binding.floatingButton.visibility = View.VISIBLE
+                        binding.mapGPSButton.visibility = View.GONE
+                        binding.floatingButton.startAnimation(fadeIn)
+                        binding.mapGPSButton.startAnimation(fadeOut)
                     }
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-                        floatingButton.startAnimation(fadeOut)
-                        floatingButton.visibility = View.GONE
-                        mapGPSButton.startAnimation(fadeIn)
-                        mapGPSButton.visibility = View.VISIBLE
+                        binding.floatingButton.startAnimation(fadeOut)
+                        binding.floatingButton.visibility = View.GONE
+                        binding.mapGPSButton.startAnimation(fadeIn)
+                        binding.mapGPSButton.visibility = View.VISIBLE
                     }
                     BottomSheetBehavior.STATE_DRAGGING -> {
                     }
@@ -150,7 +151,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         })
 
         // floating 버튼 동작
-        floatingButton.setOnClickListener {
+        binding.floatingButton.setOnClickListener {
             supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.innerContainer, AddPubDataFragment.newInstance())
@@ -159,7 +160,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         Log.d("AppRecycle", "oncreate()")
         //GPS 버튼 동작
-        mapGPSButton.setOnClickListener{
+        binding.mapGPSButton.setOnClickListener{
             if(ActivityCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 onCheckPermission()
@@ -167,12 +168,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 // 여기에 위치정보 받아오는 역할
                 if (isNotEnabledGPS) { // GPS가 비활성화 되어있다면
                     requestCurrentLocation()
-                    mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.gray_400))
+                    viewModel.isMarkedUsrGPS = true
+                    binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.gray_400))
                     isNotEnabledGPS = false
                 } else { // GPS가 활성화 되어있다면
                     fusedLocationClient.removeLocationUpdates(locationCallback)
-                    mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.teal_200))
+                    binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.teal_200))
                     isNotEnabledGPS = true
+                    viewModel.isMarkedUsrGPS = false
                 }
             }
         }
@@ -182,10 +185,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         Log.d("AppRecycle", "OnMapReady()")
         map = googleMap
-        val seoul = LatLng(37.1, 128.0)
-        // 카메라 이동
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
-        map.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
+        if (!viewModel.isInitializedMap) {
+            viewModel.isInitializedMap = true
+            val seoul = LatLng(37.1, 128.0)
+            // 카메라 이동
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
+            map.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
+        }
+        if(viewModel.isMarkedUsrGPS) {
+            requestCurrentLocation()
+            binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.gray_400))
+        }
         // 현재 다크모드인지 라이트모드인지 감지하여 맵 테마 설정
         val nightModeFlags = this@MainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         when(nightModeFlags) {
@@ -198,24 +208,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // 현재 view에서 lightMode <-> darkMode를 감지하여 변경한다.
-    // activity가 재실행되지 않는다.
-    // Manifest에서 configChanges:uiMode 설정
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        Log.d("AppRecycle", "onConfigurationChanged()")
-//        val nightModeFlags = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
-//        when(nightModeFlags) {
-//            Configuration.UI_MODE_NIGHT_NO -> {
-//                setMapStyle(R.raw.standard_map_stytle_json)
-//                bottomSheet.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-//            }
-//            Configuration.UI_MODE_NIGHT_YES -> {
-//                setMapStyle(R.raw.night_map_style_json)
-//                bottomSheet.setBackgroundColor(ContextCompat.getColor(this, R.color.black))
-//            }
-//        }
-//    }
+
     private fun setMapStyle(mapStyleJsonID: Int) {
         try {
             val isStyleParseSuccess = map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this@MainActivity, mapStyleJsonID))
@@ -284,11 +277,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private fun initView() {
-        bottomSheet = findViewById(R.id.bottomSheet)
-        recyclerView = findViewById(R.id.recyclerView)
-        innerContainer = findViewById(R.id.innerContainer)
-        floatingButton = findViewById(R.id.floatingButton)
-        mapGPSButton = findViewById(R.id.MapGPSButton)
         // statusbar 투명화
         window.apply {
             setFlags(
@@ -301,7 +289,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         // 위의 작업을 수행하면 navigationBar와 statusBar가 rootview의 영역과 겹치게 된다.
         // statusBar높이, navigationBar높이 만큼 padding 값을 부여한다.
-        innerContainer.setPadding(
+        binding.innerContainer.setPadding(
             0,
             0,
             0,
@@ -319,20 +307,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     inner class PubDataRecyclerViewAdapter(val pubDataList: List<PubData>) :
         RecyclerView.Adapter<PubDataRecyclerViewAdapter.ViewHolder>() {
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            private val pubName: TextView
-            private val pubAddress: TextView
-            private val item: ConstraintLayout
+        inner class ViewHolder(private val binding: ItemPubdataRecyclerviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
-            init {
-                pubName = itemView.findViewById(R.id.pubName)
-                pubAddress = itemView.findViewById(R.id.pubAddress)
-                item = itemView.findViewById(R.id.itemView)
-            }
             fun bind(pubData: PubData) {
-                pubName.text = pubData.name
-                pubAddress.text = pubData.address
-                item.setOnClickListener {
+                binding.pubName.text = pubData.name
+                binding.pubAddress.text = pubData.address
+                binding.itemView.setOnClickListener {
                     //test
                     Toast.makeText(this@MainActivity, "${pubData.menu}", Toast.LENGTH_SHORT).show()
                     val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(LatLng(pubData.Lat, pubData.Lng), 16f)
@@ -343,8 +323,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_pubdata_recyclerview, parent, false)
-            return ViewHolder(view)
+            val binding = DataBindingUtil.inflate<ItemPubdataRecyclerviewBinding>(layoutInflater, R.layout.item_pubdata_recyclerview, parent, false)
+                return ViewHolder(binding)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -356,3 +336,4 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
+
