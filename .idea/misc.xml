@@ -5,11 +5,12 @@
       <map>
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/drawable/arrow_back.xml" value="0.1585" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/drawable/baseline_add.xml" value="0.2515" />
+        <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/drawable/baseline_search.xml" value="0.2135" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/drawable/bottom_sheet_background.xml" value="0.265" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/add_pub_data_fragment.xml" value="0.2390625" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/bottom_sheet.xml" value="0.25364583333333335" />
-        <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/fragment_add_pub_data.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/fragment_add_pub_data.xml" value="0.2" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/fragment_bottom_sheet.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/item_pubdata_recyclerview.xml" value="0.1" />
         <entry key="..\:/Users/ddori/AndroidStudioProjects/BeerMap/app/src/main/res/layout/marker_info_contents.xml" value="0.25364583333333335" />

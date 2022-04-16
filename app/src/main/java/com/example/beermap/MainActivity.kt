@@ -185,18 +185,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         Log.d("AppRecycle", "OnMapReady()")
         map = googleMap
-        if (!viewModel.isInitializedMap) {
-            viewModel.isInitializedMap = true
-            val seoul = LatLng(37.1, 128.0)
-            // 카메라 이동
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
-            map.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
-        }
-        if(viewModel.isMarkedUsrGPS) {
-            requestCurrentLocation()
-            binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.gray_400))
-            isNotEnabledGPS = false
-        }
+        val seoul = LatLng(37.1, 128.0)
+        // 카메라 이동
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
+        map.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
+
         // 현재 다크모드인지 라이트모드인지 감지하여 맵 테마 설정
         val nightModeFlags = this@MainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         when(nightModeFlags) {
