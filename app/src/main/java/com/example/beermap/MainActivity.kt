@@ -51,13 +51,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var viewModel: MainViewModel
 
     val sheetBehavior by lazy {
-        BottomSheetBehavior.from(binding.include.bottomSheet)
-    }
-    private val fadeIn by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.fade_in)
-    }
-    private val fadeOut by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.fade_out)
+        BottomSheetBehavior.from(binding.bottomSheet)
     }
     lateinit var map: GoogleMap
     private lateinit var database : FirebaseDatabase
@@ -69,13 +63,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isNotEnabledGPS: Boolean = true
     private var isMapZoomed: Boolean = false
 
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
         binding.mainViewModel = viewModel
+        binding.fragmentManager = supportFragmentManager
 
 
         database = FirebaseDatabase.getInstance()
@@ -89,7 +84,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity)
         initView()
 
-        binding.include.recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
 
         // firebase data 수신
         databaseReference.addValueEventListener(object : ValueEventListener {
@@ -109,7 +105,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         marker!!.tag = pubData
                     }
                 }
-                binding.include.recyclerView.adapter = PubDataRecyclerViewAdapter(pubDataList)
+                binding.recyclerView.adapter = PubDataRecyclerViewAdapter(pubDataList)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -117,48 +113,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
-        // bottom sheet 동작 지정
-        sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        sheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                //
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        binding.floatingButton.visibility = View.VISIBLE
-                        binding.mapGPSButton.visibility = View.GONE
-                        binding.floatingButton.startAnimation(fadeIn)
-                        binding.mapGPSButton.startAnimation(fadeOut)
-                    }
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
-                    }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        binding.floatingButton.startAnimation(fadeOut)
-                        binding.floatingButton.visibility = View.GONE
-                        binding.mapGPSButton.startAnimation(fadeIn)
-                        binding.mapGPSButton.visibility = View.VISIBLE
-                    }
-                    BottomSheetBehavior.STATE_DRAGGING -> {
-                    }
-                    BottomSheetBehavior.STATE_SETTLING -> {
-                    }
-                }
-            }
-        })
-
-        // floating 버튼 동작
-        binding.floatingButton.setOnClickListener {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.innerContainer, AddPubDataFragment.newInstance())
-                .addToBackStack(null)
-                .commit()
-        }
-        Log.d("AppRecycle", "oncreate()")
         //GPS 버튼 동작
         binding.mapGPSButton.setOnClickListener{
             if(ActivityCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED

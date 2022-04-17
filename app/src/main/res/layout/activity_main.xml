@@ -7,6 +7,10 @@
         <variable
             name="mainViewModel"
             type="com.example.beermap.MainViewModel" />
+
+        <variable
+            name="fragmentManager"
+            type="androidx.fragment.app.FragmentManager" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,12 +41,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <include
-                    android:id="@+id/include"
-                    layout="@layout/bottom_sheet" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/bottomSheet"
+                    android:layout_width="match_parent"
+                    android:layout_height="600dp"
+                    android:background="@drawable/bottom_sheet_background"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    app:addPubFAB="@{addPubFAButton}"
+                    app:mapGPSFAB="@{mapGPSButton}"
+                    app:behavior_hideable="false"
+                    app:behavior_peekHeight="100dp"
+                    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                    android:id="@+id/floatingButton"
+                    android:id="@+id/addPubFAButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
@@ -50,7 +74,9 @@
                     android:layout_marginBottom="20dp"
                     android:text="ADD PUB"
                     android:visibility="gone"
-                    app:icon="@drawable/baseline_add" />
+                    app:icon="@drawable/baseline_add"
+                    app:setFgm="@{fragmentManager}"
+                    />
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                     android:id="@+id/mapGPSButton"
