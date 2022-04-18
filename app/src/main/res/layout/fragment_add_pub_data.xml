@@ -86,6 +86,8 @@
                             android:id="@+id/pubAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:focusable="false"
                             android:hint="주소"
                             android:maxLines="2"
                             android:minHeight="48dp" />
@@ -145,15 +147,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="80dp"
+                    android:layout_marginTop="30dp"
                     android:text="등록"
                     android:textSize="14sp"
                     android:textStyle="bold"
+                    app:pubTitle="@{pubTitle}"
+                    app:pubAddress="@{pubAddress}"
+                    app:pubMenu="@{pubMenu}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/TIL_pub_menu"
-                    android:layout_marginTop="30dp"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/TIL_pub_menu"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
