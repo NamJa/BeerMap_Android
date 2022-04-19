@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/marker_info_background"
+    android:padding="15dp"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/marker_pub_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="18sp"
         android:textStyle="bold"
         tools:text="hou" />
@@ -19,16 +21,16 @@
         android:id="@+id/marker_pub_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="16sp"
         tools:text="서울시 중구가 시키드나" />
 
-        <TextView
-            android:id="@+id/marker_pub_menu"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/black"
-            tools:text="stout가 먹고싶다" />
+    <TextView
+        android:id="@+id/marker_pub_menu"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="?attr/colorOnSecondary"
+        tools:text="stout가 먹고싶다" />
 
 </LinearLayout>

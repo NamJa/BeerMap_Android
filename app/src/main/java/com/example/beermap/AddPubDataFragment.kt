@@ -35,7 +35,7 @@ class AddPubDataFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var geocoder: Geocoder
 
-    private lateinit var addPubFragmentViewModel: AddPubDataFragmentViewModel
+    private lateinit var viewModel: AddPubDataFragmentViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +47,7 @@ class AddPubDataFragment : Fragment() {
         }
         // GeoCoder initialize
         geocoder = Geocoder(context, Locale.KOREA)
-        addPubFragmentViewModel = ViewModelProvider(this).get(AddPubDataFragmentViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(AddPubDataFragmentViewModel::class.java)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
@@ -57,7 +57,7 @@ class AddPubDataFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_pub_data, container, false)
         binding.requireActivity = requireActivity()
-        binding.viewModel = addPubFragmentViewModel
+        binding.viewModel = viewModel
         initView(binding.root)
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -81,11 +81,11 @@ class AddPubDataFragment : Fragment() {
             }
         }
         // addressSearchButton 동작시 변경되는 Boolean 값을 관찰
-        addPubFragmentViewModel.isAddressSearchBtnClicked.observe(
+        viewModel.isAddressSearchBtnClicked.observe(
             viewLifecycleOwner,
             androidx.lifecycle.Observer { isBtnClicked ->
                 if (isBtnClicked) {
-                    startForResult.launch(addPubFragmentViewModel.getReceiveIntent)
+                    startForResult.launch(viewModel.getReceiveIntent)
                 }
             }
         )
