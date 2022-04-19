@@ -4,7 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="requireActivity"
+            type="androidx.fragment.app.FragmentActivity" />
 
+        <variable
+            name="viewModel"
+            type="com.example.beermap.AddPubDataFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -100,7 +106,9 @@
                         android:layout_height="35dp"
                         android:layout_marginStart="5dp"
                         android:src="@drawable/baseline_search"
-                        android:scaleType="fitStart" />
+                        android:scaleType="fitStart"
+                        app:reqAct="@{requireActivity}"
+                        app:viewModel="@{viewModel}" />
                 </LinearLayout>
 
                 <Button

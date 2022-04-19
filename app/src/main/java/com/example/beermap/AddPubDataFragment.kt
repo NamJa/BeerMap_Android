@@ -17,12 +17,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.example.beermap.databinding.FragmentAddPubDataBinding
 import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import java.util.*
 
 private const val TAG = "AddPubDataFragment"
@@ -35,6 +35,8 @@ class AddPubDataFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var geocoder: Geocoder
 
+    private lateinit var addPubFragmentViewModel: AddPubDataFragmentViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +47,7 @@ class AddPubDataFragment : Fragment() {
         }
         // GeoCoder initialize
         geocoder = Geocoder(context, Locale.KOREA)
-
+        addPubFragmentViewModel = ViewModelProvider(this).get(AddPubDataFragmentViewModel::class.java)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
@@ -54,7 +56,8 @@ class AddPubDataFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_pub_data, container, false)
-
+        binding.requireActivity = requireActivity()
+        binding.viewModel = addPubFragmentViewModel
         initView(binding.root)
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -77,18 +80,15 @@ class AddPubDataFragment : Fragment() {
                 Log.d(TAG, "lat: $addPubLongitude")
             }
         }
-
-        binding.addressSearchButton.setOnClickListener {
-            val fields = listOf(
-                Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG,
-                Place.Field.ADDRESS
-            )
-            val intent =
-                Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
-                    .build(requireActivity())
-
-            startForResult.launch(intent)
-        }
+        // addressSearchButton 동작시 변경되는 Boolean 값을 관찰
+        addPubFragmentViewModel.isAddressSearchBtnClicked.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { isBtnClicked ->
+                if (isBtnClicked) {
+                    startForResult.launch(addPubFragmentViewModel.getReceiveIntent)
+                }
+            }
+        )
 
         binding.useCurLocationButton.setOnClickListener {
             if(ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED

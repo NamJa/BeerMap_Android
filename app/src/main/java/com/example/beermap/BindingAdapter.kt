@@ -5,10 +5,15 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.firebase.database.DatabaseReference
@@ -109,4 +114,25 @@ private fun updateData (
     val pubNo = "pubNo$totalPubNum"
     Log.d("BindingAdapter", pubNo)
     dbReference.child(pubNo).updateChildren(pub)
+}
+
+
+/**
+ * AddPubFragment의 AddressSearchButton(ImageView)의 동작 => 주소 검색
+ */
+@BindingAdapter(value = ["app:reqAct", "app:viewModel"], requireAll = true)
+fun searchAddress(view: ImageView, reqAct: FragmentActivity, viewModel: AddPubDataFragmentViewModel) {
+    view.setOnClickListener {
+        val fields = listOf(
+            Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG,
+            Place.Field.ADDRESS
+        )
+        val intent =
+            Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(reqAct)
+        viewModel.getReceiveIntent = intent
+        // fragment에서 bool값을 관찰하므로 안전하게
+        // 마지막으로 bool값을 할당한다
+        viewModel._isAddressSearchBtnClicked.value = true
+    }
 }
