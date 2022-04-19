@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,8 +37,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,13 +51,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         BottomSheetBehavior.from(binding.bottomSheet)
     }
     lateinit var map: GoogleMap
-    private lateinit var database : FirebaseDatabase
-    private lateinit var databaseReference: DatabaseReference
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var pubDataList: MutableList<PubData> = mutableListOf()
     private var userCurLat: Double = 0.0
     private var userCurLng: Double = 0.0
-    private var isNotEnabledGPS: Boolean = true
     private var isMapZoomed: Boolean = false
 
     lateinit var binding: ActivityMainBinding
@@ -71,10 +66,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.fragmentManager = supportFragmentManager
 
 
-        database = FirebaseDatabase.getInstance()
-        databaseReference = database.getReference("pubs")
-
-
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
@@ -85,14 +76,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
 
-        // firebase data 수신
-        databaseReference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                pubDataList = mutableListOf()
-                for (data in snapshot.children) {
-                    val result = data.getValue<PubData>()
-                    pubDataList.add(result!!)
-                }
+        // bottom Sheet RecyclerView 구성
+        val pubData = (application as MasterApplication).pubDataListLiveData
+        pubData.observe(
+            this,
+            Observer { pubDataList ->
                 CoroutineScope(Dispatchers.Main).launch {
                     pubDataList.forEach { pubData ->
                         val pubLoc = LatLng(pubData.Lat, pubData.Lng)
@@ -100,17 +88,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             .position(pubLoc)
                             .title(pubData.name)
                         )
-                        Log.d("TAG", "firebase: ${pubData.menu}")
                         marker!!.tag = pubData
                     }
                 }
                 binding.recyclerView.adapter = PubDataRecyclerViewAdapter(pubDataList)
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "loadPost: onCancelled", error.toException())
-            }
-        })
+        )
 
         //GPS 버튼 동작
         binding.mapGPSButton.setOnClickListener{
@@ -297,4 +280,3 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
-
