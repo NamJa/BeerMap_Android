@@ -255,8 +255,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             fun bind(pubData: PubData) {
                 binding.viewModel?.pub = pubData
                 binding.itemView.setOnClickListener {
-                    //test Toast Message
-                    Toast.makeText(this@MainActivity, "${pubData.menu}", Toast.LENGTH_SHORT).show()
                     val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(LatLng(pubData.Lat, pubData.Lng), 16f)
                     map.animateCamera(newLatLngZoom)
                     sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
