@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             .position(pubLoc)
                             .title(pubData.name)
                         )
+                        Log.d("TAG", "firebase: ${pubData.menu}")
                         marker!!.tag = pubData
                     }
                 }
@@ -118,29 +119,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 onCheckPermission()
             } else {
                 // 여기에 위치정보 받아오는 역할
-                if (isNotEnabledGPS) { // GPS가 비활성화 되어있다면
+                if (viewModel.isNotEnabledGPS) { // GPS가 비활성화 되어있다면
                     requestCurrentLocation()
                     viewModel.isMarkedUsrGPS = true
                     binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.gray_400))
-                    isNotEnabledGPS = false
+                    viewModel.isNotEnabledGPS = false
                 } else { // GPS가 활성화 되어있다면
                     fusedLocationClient.removeLocationUpdates(locationCallback)
                     binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.teal_200))
-                    isNotEnabledGPS = true
+                    viewModel.isNotEnabledGPS = true
                     viewModel.isMarkedUsrGPS = false
                 }
             }
         }
     }
 
-
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        val seoul = LatLng(37.1, 128.0)
-        // 카메라 이동
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
         map.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
-
+        // 이미 맵을 초기화 했었다면
+        if (!viewModel.isInitializedMap) {
+            val seoul = LatLng(37.1, 128.0)
+            // 카메라 이동
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 7f))
+            viewModel.isInitializedMap = true
+        }
+        // GPS 동작 중 다크&라이트모드 UI로의 전환이 있었다면
+        if (!viewModel.isNotEnabledGPS) {
+            map.isMyLocationEnabled = true
+            map.uiSettings.isMyLocationButtonEnabled = false
+            binding.mapGPSButton.setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.gray_400))
+            requestCurrentLocation()
+        }
         // 현재 다크모드인지 라이트모드인지 감지하여 맵 테마 설정
         val nightModeFlags = this@MainActivity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         when(nightModeFlags) {
@@ -189,8 +200,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun requestCurrentLocation() {
         val locationRequest = com.google.android.gms.location.LocationRequest.create().apply {
             priority = com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = 50
-            fastestInterval = 20
+            interval = 100
+            fastestInterval = 50
         }
         // 다른 Map app과 같이 현재 위치를 표시한다.
         map.isMyLocationEnabled = true
