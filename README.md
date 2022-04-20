@@ -9,14 +9,14 @@ https://user-images.githubusercontent.com/4739243/164236828-5888e684-290c-4ff1-9
 ## **MainActivity**
 - ### 메인화면
 
-<img src="./Image/main1.jpg" width="230" > <img src="./Image/main2.jpg" width="230" > <img src="./Image/main_bottom1.jpg" width="230" > <img src="./Image/main_bottom2.jpg" width="230" >
+<img src="./Image/main1.jpg" width="240" > <img src="./Image/main2.jpg" width="240" > <img src="./Image/main_bottom1.jpg" width="240" > <img src="./Image/main_bottom2.jpg" width="240" >
 
 - ### 마커 클릭 시
 
-<img src="./Image/marker1.jpg" width="230" > <img src="./Image/marker2.jpg" width="230" >
+<img src="./Image/marker1.jpg" width="240" > <img src="./Image/marker2.jpg" width="240" >
 
 ## **AddPubFragment**
-<img src="./Image/addPub1.jpg" width="230" > <img src="./Image/addPub2.jpg" width="230" > <img src="./Image/googlePlace.jpg" width="230" >
+<img src="./Image/addPub1.jpg" width="240" > <img src="./Image/addPub2.jpg" width="240" > <img src="./Image/googlePlace.jpg" width="240" >
 
 <br><br>
 
