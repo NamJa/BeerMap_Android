@@ -3,19 +3,19 @@
 ## **USED DATA FROM**
 - ### It's Me.
 ## **Short Usage shot**
-<video src="Image\movie\beerMap_SUS.mp4" width="270" controls></video>
+<video src="./Image/movie/beerMap_SUS.mp4" width="270" controls></video>
 
 ## **MainActivity**
 - ### 메인화면
 
-<img src="./Image/main1.jpg" width="210" > <img src="./Image/main2.jpg" width="210" > <img src="./Image/main_bottom1.jpg" width="210" > <img src="./Image/main_bottom2.jpg" width="210" >
+<img src="./Image/main1.jpg" width="230" > <img src="./Image/main2.jpg" width="230" > <img src="./Image/main_bottom1.jpg" width="230" > <img src="./Image/main_bottom2.jpg" width="230" >
 
 - ### 마커 클릭 시
 
-<img src="./Image/marker1.jpg" width="210" > <img src="./Image/marker2.jpg" width="210" >
+<img src="./Image/marker1.jpg" width="230" > <img src="./Image/marker2.jpg" width="230" >
 
 ## **AddPubFragment**
-<img src="./Image/addPub1.jpg" width="210" > <img src="./Image/addPub2.jpg" width="210" > <img src="./Image/googlePlace.jpg" width="210" >
+<img src="./Image/addPub1.jpg" width="230" > <img src="./Image/addPub2.jpg" width="230" > <img src="./Image/googlePlace.jpg" width="230" >
 
 <br><br>
 
