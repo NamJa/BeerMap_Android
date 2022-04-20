@@ -3,7 +3,8 @@
 ## **USED DATA FROM**
 - ### It's Me.
 ## **Short Usage shot**
-<video src="./Image/movie/beerMap_SUS.mp4" width="270" controls></video>
+https://user-images.githubusercontent.com/4739243/164236828-5888e684-290c-4ff1-932b-81259fa885c8.mp4
+
 
 ## **MainActivity**
 - ### 메인화면
