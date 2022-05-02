@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.beermap.databinding.ActivityMainBinding
 import com.example.beermap.databinding.ItemPubdataRecyclerviewBinding
 import com.example.beermap.firebase.PubData
+import com.example.beermap.view_model.MainViewModel
+import com.example.beermap.view_model.PubDataViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
@@ -61,7 +63,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(
+            MainViewModel::class.java)
         binding.mainViewModel = viewModel
         binding.fragmentManager = supportFragmentManager
 

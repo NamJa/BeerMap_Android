@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.beermap.AddPubDataFragmentViewModel" />
+            type="com.example.beermap.view_model.AddPubDataFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

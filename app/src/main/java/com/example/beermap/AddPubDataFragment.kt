@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.beermap.databinding.FragmentAddPubDataBinding
+import com.example.beermap.view_model.AddPubDataFragmentViewModel
 import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place

@@ -1,4 +1,4 @@
-package com.example.beermap
+package com.example.beermap.view_model
 
 import android.content.Intent
 import androidx.lifecycle.LiveData

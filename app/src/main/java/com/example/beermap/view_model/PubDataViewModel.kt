@@ -1,4 +1,4 @@
-package com.example.beermap
+package com.example.beermap.view_model
 
 import androidx.databinding.BaseObservable
 import com.example.beermap.firebase.PubData

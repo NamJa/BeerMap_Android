@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.beermap.PubDataViewModel" />
+            type="com.example.beermap.view_model.PubDataViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
