@@ -23,7 +23,7 @@ https://user-images.githubusercontent.com/4739243/164236828-5888e684-290c-4ff1-9
 ## **Introduce**
 제가 방문했던 맥주Pub의 위치 및 간략한 정보들을 표시하는 Android App입니다.
 
-지금까지 사용해오던 **MVC(라고 불만 M-VC 같은)** 패턴에서 벗어나 **MVVM**으로 개발을 진행하였습니다.
+지금까지 사용해오던 **MVC(라고 하지만 M-VC 같은)** 패턴에서 벗어나 **MVVM**으로 개발을 진행하였습니다.
 
 **Google Map**과 Firebase의 Realtime Database를 이용하여 구성했습니다.
 
